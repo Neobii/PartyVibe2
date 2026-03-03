@@ -45,3 +45,31 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const mood = body?.mood;
+
+    if (typeof mood !== "number" || !Number.isInteger(mood)) {
+      return NextResponse.json(
+        { error: "mood must be an integer" },
+        { status: 400 }
+      );
+    }
+
+    const updated = await prisma.moodState.upsert({
+      where: { id: 1 },
+      update: { mood },
+      create: { id: 1, mood },
+    });
+
+    return NextResponse.json({ mood: updated.mood });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useMood } from "@/hooks/useMood";
 import { useUpdateMood } from "@/hooks/useUpdateMood";
+import Link from "next/link";
 
 export default function Home() {
   const { data, isLoading } = useMood();
@@ -18,7 +19,15 @@ export default function Home() {
         gap: "2rem",
       }}
     >
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 600 }}>Party Vibe 2</h1>
+      <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: 600 }}>Party Vibe 2</h1>
+        <Link
+          href="/admin"
+          style={{ color: "#a78bfa", textDecoration: "none", fontSize: "0.875rem" }}
+        >
+          Admin
+        </Link>
+      </div>
 
       <div
         style={{
