@@ -7,7 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model MoodState {
-  id   Int @id @default(1)
-  mood Int @default(0)
+model MoodEntry {
+  id        Int      @id @default(autoincrement())
+  mood      Int
+  createdAt DateTime @default(now())
 }

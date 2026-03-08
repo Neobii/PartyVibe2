@@ -2,12 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const state = await prisma.moodState.findUnique({
-      where: { id: 1 },
+    const { searchParams } = new URL(request.url);
+    const history = searchParams.get("history") === "true";
+
+    if (history) {
+      const entries = await prisma.moodEntry.findMany({
+        orderBy: { createdAt: "asc" },
+      });
+      return NextResponse.json({
+        history: entries.map((e) => ({
+          mood: e.mood,
+          createdAt: e.createdAt.toISOString(),
+        })),
+      });
+    }
+
+    const latest = await prisma.moodEntry.findFirst({
+      orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json({ mood: state?.mood ?? 0 });
+    return NextResponse.json({ mood: latest?.mood ?? 0 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -30,14 +45,17 @@ export async function POST(request: NextRequest) {
     }
 
     const delta = value === 1 ? 1 : -1;
+    const latest = await prisma.moodEntry.findFirst({
+      orderBy: { createdAt: "desc" },
+    });
+    const currentMood = latest?.mood ?? 0;
+    const newMood = Math.max(-100, Math.min(100, currentMood + delta));
 
-    const updated = await prisma.moodState.upsert({
-      where: { id: 1 },
-      update: { mood: { increment: delta } },
-      create: { id: 1, mood: delta },
+    const created = await prisma.moodEntry.create({
+      data: { mood: newMood },
     });
 
-    return NextResponse.json({ mood: updated.mood });
+    return NextResponse.json({ mood: created.mood });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -70,13 +88,11 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const updated = await prisma.moodState.upsert({
-      where: { id: 1 },
-      update: { mood },
-      create: { id: 1, mood },
+    const created = await prisma.moodEntry.create({
+      data: { mood },
     });
 
-    return NextResponse.json({ mood: updated.mood });
+    return NextResponse.json({ mood: created.mood });
   } catch (error) {
     console.error(error);
     return NextResponse.json(

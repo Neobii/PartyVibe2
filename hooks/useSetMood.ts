@@ -22,6 +22,7 @@ export function useSetMood() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["mood"], data);
+      queryClient.invalidateQueries({ queryKey: ["mood", "history"] });
     },
   });
 }

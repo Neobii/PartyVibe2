@@ -46,7 +46,8 @@ vercel
 
 ## Pages
 
-- `/` — Main mood display with increment/decrement buttons
+- `/` — Mood line graph over time
+- `/friend` — Mood display with increment/decrement buttons
 - `/login` — GitHub sign-in (required for admin)
 - `/admin` — Admin panel to set mood (-100 to 100); requires login
 

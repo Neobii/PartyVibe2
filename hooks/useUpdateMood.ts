@@ -24,6 +24,7 @@ export function useUpdateMood() {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["mood"], data);
+      queryClient.invalidateQueries({ queryKey: ["mood", "history"] });
     },
   });
 }
