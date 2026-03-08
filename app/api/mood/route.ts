@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 
 export async function GET() {
@@ -48,12 +49,23 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await request.json();
     const mood = body?.mood;
 
     if (typeof mood !== "number" || !Number.isInteger(mood)) {
       return NextResponse.json(
         { error: "mood must be an integer" },
+        { status: 400 }
+      );
+    }
+    if (mood < -100 || mood > 100) {
+      return NextResponse.json(
+        { error: "mood must be between -100 and 100" },
         { status: 400 }
       );
     }

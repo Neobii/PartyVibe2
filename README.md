@@ -47,7 +47,14 @@ vercel
 ## Pages
 
 - `/` — Main mood display with increment/decrement buttons
-- `/admin` — Admin panel to set mood to a specific value
+- `/login` — GitHub sign-in (required for admin)
+- `/admin` — Admin panel to set mood (-100 to 100); requires login
+
+## GitHub Auth Setup
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
+2. New OAuth App: set **Homepage URL** and **Authorization callback URL** (e.g. `http://localhost:3000/api/auth/callback/github` for local)
+3. Add to `.env`: `GITHUB_ID`, `GITHUB_SECRET`, `AUTH_SECRET` (run `openssl rand -base64 32`)
 
 ## API
 

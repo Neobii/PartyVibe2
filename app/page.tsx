@@ -85,6 +85,7 @@ export default function Home() {
           Increment (1)
         </button>
       </div>
+      <p>Has secret: {process.env.AUTH_SECRET ? "yes" : "no"}</p>
     </main>
   );
 }
