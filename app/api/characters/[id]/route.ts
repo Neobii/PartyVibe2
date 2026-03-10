@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isValidCharacterSlug } from "@/lib/character-slug";
 
@@ -37,6 +38,10 @@ export async function GET(_request: NextRequest, { params }: Params) {
 
 export async function PATCH(request: NextRequest, { params }: Params) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const id = parseInt((await params).id, 10);
     if (Number.isNaN(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
@@ -102,6 +107,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
 export async function DELETE(_request: NextRequest, { params }: Params) {
   try {
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const id = parseInt((await params).id, 10);
     if (Number.isNaN(id)) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });

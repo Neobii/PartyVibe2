@@ -15,11 +15,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isAdmin = nextUrl.pathname.startsWith("/admin");
-      // Temporarily allow admin without login — remove next line to re-enable
-      if (isAdmin) return true;
       if (isAdmin && !auth) return false;
       return true;
     },
   },
 });
-
