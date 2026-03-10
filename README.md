@@ -2,6 +2,8 @@
 
 Mood tracker with Next.js, TanStack Query, and PostgreSQL.
 
+[PartyVibe2](https://party-vibe2.vercel.app)
+
 ## Setup
 
 1. Copy `.env.example` to `.env` and add your `DATABASE_URL`.
