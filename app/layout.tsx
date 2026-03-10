@@ -3,7 +3,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Party Vibe 2",
+  title: "Mood tracker",
   description: "Mood tracker",
 };
 
