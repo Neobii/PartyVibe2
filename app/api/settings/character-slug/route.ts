@@ -29,7 +29,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "Invalid slug. Use letters, numbers, hyphens only; not reserved (admin, login, friend, api).",
+            "Invalid slug. Use letters, numbers, hyphens only; not reserved (admin, login, api).",
         },
         { status: 400 }
       );

@@ -6,7 +6,6 @@ const DEFAULT_SLUG = "character";
 const RESERVED = new Set([
   "admin",
   "login",
-  "friend",
   "api",
   "_next",
   "favicon.ico",

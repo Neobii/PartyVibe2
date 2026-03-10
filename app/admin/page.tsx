@@ -1,7 +1,5 @@
 "use client";
 
-import { useMood } from "@/hooks/useMood";
-import { useSetMood } from "@/hooks/useSetMood";
 import { useCharacters } from "@/hooks/useCharacters";
 import {
   useCreateCharacter,
@@ -27,14 +25,11 @@ const inputStyle: React.CSSProperties = {
 };
 
 export default function AdminPage() {
-  const { data: globalMood, isLoading: globalLoading } = useMood();
-  const { mutate: setGlobalMood, isPending: globalPending } = useSetMood();
   const { data: characters, isLoading: listLoading } = useCharacters();
   const createChar = useCreateCharacter();
   const updateChar = useUpdateCharacter();
   const deleteChar = useDeleteCharacter();
 
-  const [globalValue, setGlobalValue] = useState("0");
   const [newSlug, setNewSlug] = useState("");
   const [newName, setNewName] = useState("");
   const [newMood, setNewMood] = useState("0");
@@ -42,10 +37,6 @@ export default function AdminPage() {
   const [editSlug, setEditSlug] = useState("");
   const [editName, setEditName] = useState("");
   const [editMood, setEditMood] = useState("");
-
-  const globalNum = parseInt(globalValue, 10);
-  const globalValid =
-    !Number.isNaN(globalNum) && globalNum >= MIN_MOOD && globalNum <= MAX_MOOD;
 
   const startEdit = (c: { id: number; slug: string; name: string | null; mood: number }) => {
     setEditingId(c.id);
@@ -374,64 +365,6 @@ export default function AdminPage() {
             ))}
           </ul>
         )}
-      </section>
-
-      {/* Global mood — used by Friend page / legacy chart */}
-      <section
-        style={{
-          background: "rgba(255,255,255,0.05)",
-          borderRadius: "0.5rem",
-          padding: "2rem",
-          minWidth: "320px",
-        }}
-      >
-        <h2 style={{ fontSize: "1rem", marginBottom: "1rem", color: "#ccc" }}>
-          Global mood (Friend page)
-        </h2>
-        <p style={{ marginBottom: "1rem", color: "#888", fontSize: "0.875rem" }}>
-          Current mood: {globalLoading ? "…" : globalMood?.mood ?? 0} — separate from per-character
-          mood. Use the field below to <strong style={{ color: "#d1d5db" }}>set mood</strong> for the
-          Friend page only.
-        </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (globalValid) {
-              setGlobalMood(globalNum);
-              setGlobalValue("0");
-            }
-          }}
-          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-        >
-          <label htmlFor="global-mood-input" style={{ color: "#9ca3af", fontSize: "0.875rem" }}>
-            Set mood value ({MIN_MOOD} to {MAX_MOOD})
-          </label>
-          <input
-            id="global-mood-input"
-            type="number"
-            min={MIN_MOOD}
-            max={MAX_MOOD}
-            value={globalValue}
-            onChange={(e) => setGlobalValue(e.target.value)}
-            style={inputStyle}
-            aria-label="Set global mood from negative 100 to 100"
-          />
-          <button
-            type="submit"
-            disabled={globalPending || !globalValid}
-            style={{
-              padding: "0.75rem 1.5rem",
-              fontWeight: 600,
-              borderRadius: "0.5rem",
-              border: "none",
-              background: globalValid ? "#7c3aed" : "#374151",
-              color: "#fff",
-              cursor: globalPending || !globalValid ? "not-allowed" : "pointer",
-            }}
-          >
-            {globalPending ? "Saving…" : "Set global mood"}
-          </button>
-        </form>
       </section>
     </main>
   );
