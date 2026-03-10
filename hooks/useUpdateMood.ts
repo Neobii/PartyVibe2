@@ -1,18 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-type MoodInput = 0 | 1; // 0 = decrement, 1 = increment
+type MoodInput = 0 | 1;
 
 type MoodResponse = { mood: number };
 
-export function useUpdateMood() {
+export function useUpdateMood(characterSlug?: string | null) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (value: MoodInput) => {
+      const body: { value: MoodInput; characterSlug?: string } = { value };
+      if (characterSlug != null && characterSlug !== "") {
+        body.characterSlug = characterSlug;
+      }
       const res = await fetch("/api/mood", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -23,7 +27,7 @@ export function useUpdateMood() {
       return res.json() as Promise<MoodResponse>;
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(["mood"], data);
+      queryClient.setQueryData(["mood", characterSlug ?? "global"], data);
       queryClient.invalidateQueries({ queryKey: ["mood", "history"] });
     },
   });

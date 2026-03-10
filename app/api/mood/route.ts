@@ -1,12 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
+
+async function getCharacterBySlug(slug: string) {
+  return prisma.character.findFirst({
+    where: { slug: slug.trim().toLowerCase() },
+  });
+}
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const history = searchParams.get("history") === "true";
+    const characterSlug = searchParams.get("characterSlug");
 
+    if (characterSlug) {
+      const c = await getCharacterBySlug(characterSlug);
+      if (!c) {
+        return NextResponse.json({ error: "Character not found" }, { status: 404 });
+      }
+      return NextResponse.json({ mood: c.mood });
+    }
+
+    const history = searchParams.get("history") === "true";
     if (history) {
       const entries = await prisma.moodEntry.findMany({
         orderBy: { createdAt: "asc" },
@@ -36,12 +50,28 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const value = body?.value;
+    const characterSlug =
+      typeof body?.characterSlug === "string" ? body.characterSlug : null;
 
     if (value !== 0 && value !== 1) {
       return NextResponse.json(
         { error: "value must be 0 or 1" },
         { status: 400 }
       );
+    }
+
+    if (characterSlug) {
+      const c = await getCharacterBySlug(characterSlug);
+      if (!c) {
+        return NextResponse.json({ error: "Character not found" }, { status: 404 });
+      }
+      const delta = value === 1 ? 1 : -1;
+      const newMood = Math.max(-100, Math.min(100, c.mood + delta));
+      const updated = await prisma.character.update({
+        where: { id: c.id },
+        data: { mood: newMood },
+      });
+      return NextResponse.json({ mood: updated.mood });
     }
 
     const delta = value === 1 ? 1 : -1;
@@ -67,14 +97,10 @@ export async function POST(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    // Temporarily allow without login — uncomment to re-enable auth
-    // const session = await auth();
-    // if (!session?.user) {
-    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    // }
-
     const body = await request.json();
     const mood = body?.mood;
+    const characterSlug =
+      typeof body?.characterSlug === "string" ? body.characterSlug : null;
 
     if (typeof mood !== "number" || !Number.isInteger(mood)) {
       return NextResponse.json(
@@ -87,6 +113,18 @@ export async function PATCH(request: NextRequest) {
         { error: "mood must be between -100 and 100" },
         { status: 400 }
       );
+    }
+
+    if (characterSlug) {
+      const c = await getCharacterBySlug(characterSlug);
+      if (!c) {
+        return NextResponse.json({ error: "Character not found" }, { status: 404 });
+      }
+      const updated = await prisma.character.update({
+        where: { id: c.id },
+        data: { mood },
+      });
+      return NextResponse.json({ mood: updated.mood });
     }
 
     const created = await prisma.moodEntry.create({

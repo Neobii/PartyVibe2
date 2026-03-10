@@ -31,9 +31,15 @@ function getCharacter(mood: number | undefined) {
 
 const FEEDBACK_DURATION_MS = 5000;
 
-export default function CharacterPage() {
-  const { data, isLoading } = useMood();
-  const { mutate: updateMood, isPending: isUpdating } = useUpdateMood();
+type Props = {
+  characterSlug: string;
+  /** Shown in the page title; falls back to slug if name is empty */
+  characterName: string;
+};
+
+export default function CharacterPage({ characterSlug, characterName }: Props) {
+  const { data, isLoading } = useMood(characterSlug);
+  const { mutate: updateMood, isPending: isUpdating } = useUpdateMood(characterSlug);
   const mood = data?.mood;
   const { face, label, color } = getCharacter(isLoading ? undefined : mood);
 
@@ -92,7 +98,7 @@ export default function CharacterPage() {
         >
           ← Home
         </Link>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 600 }}>Mood Character</h1>
+        <h1 style={{ fontSize: "1.5rem", fontWeight: 600 }}>{characterName}</h1>
       </div>
 
       <div

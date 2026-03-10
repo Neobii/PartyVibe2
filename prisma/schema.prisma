@@ -13,8 +13,18 @@ model MoodEntry {
   createdAt DateTime @default(now())
 }
 
-// Key-value settings (e.g. character_slug → URL segment for mood character page)
+// Key-value settings (legacy / misc)
 model Setting {
   key   String @id
   value String
+}
+
+// Multiple mood characters, each with its own URL slug and mood
+model Character {
+  id        Int      @id @default(autoincrement())
+  slug      String   @unique
+  name      String?
+  mood      Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
