@@ -4,7 +4,12 @@ import type { CharacterDto } from "@/hooks/useCharacters";
 export function useCreateCharacter() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (body: { slug: string; name?: string; mood?: number }) => {
+    mutationFn: async (body: {
+      slug: string;
+      name?: string;
+      mood?: number;
+      avatarStyle?: string;
+    }) => {
       const res = await fetch("/api/characters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -30,6 +35,7 @@ export function useUpdateCharacter() {
       slug?: string;
       name?: string | null;
       mood?: number;
+      avatarStyle?: string;
     }) => {
       const { id, ...patch } = args;
       const res = await fetch(`/api/characters/${id}`, {

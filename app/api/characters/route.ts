@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isValidCharacterSlug } from "@/lib/character-slug";
+import { DEFAULT_AVATAR_STYLE, isValidAvatarStyle } from "@/lib/avatar-styles";
 
 const MIN_MOOD = -100;
 const MAX_MOOD = 100;
@@ -21,6 +22,7 @@ export async function GET() {
         slug: c.slug,
         name: c.name,
         mood: c.mood,
+        avatarStyle: c.avatarStyle,
         createdAt: c.createdAt.toISOString(),
         updatedAt: c.updatedAt.toISOString(),
       })),
@@ -49,6 +51,15 @@ export async function POST(request: NextRequest) {
       mood = clampMood(n);
     }
 
+    let avatarStyle = DEFAULT_AVATAR_STYLE;
+    if (body?.avatarStyle != null) {
+      const s = String(body.avatarStyle).trim();
+      if (!isValidAvatarStyle(s)) {
+        return NextResponse.json({ error: "Invalid avatarStyle" }, { status: 400 });
+      }
+      avatarStyle = s;
+    }
+
     if (!isValidCharacterSlug(slug)) {
       return NextResponse.json(
         { error: "Invalid slug (letters, numbers, hyphens; not reserved paths)." },
@@ -57,7 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     const created = await prisma.character.create({
-      data: { slug, name, mood },
+      data: { slug, name, mood, avatarStyle },
     });
     await prisma.characterMoodEntry.create({
       data: { characterId: created.id, mood: created.mood },
@@ -68,6 +79,7 @@ export async function POST(request: NextRequest) {
         slug: created.slug,
         name: created.name,
         mood: created.mood,
+        avatarStyle: created.avatarStyle,
         createdAt: created.createdAt.toISOString(),
         updatedAt: created.updatedAt.toISOString(),
       },

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { isValidCharacterSlug } from "@/lib/character-slug";
+import { isValidAvatarStyle } from "@/lib/avatar-styles";
 
 const MIN_MOOD = -100;
 const MAX_MOOD = 100;
@@ -26,6 +27,7 @@ export async function GET(_request: NextRequest, { params }: Params) {
         slug: c.slug,
         name: c.name,
         mood: c.mood,
+        avatarStyle: c.avatarStyle,
         createdAt: c.createdAt.toISOString(),
         updatedAt: c.updatedAt.toISOString(),
       },
@@ -47,7 +49,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       return NextResponse.json({ error: "Invalid id" }, { status: 400 });
     }
     const body = await request.json();
-    const data: { slug?: string; name?: string | null; mood?: number } = {};
+    const data: { slug?: string; name?: string | null; mood?: number; avatarStyle?: string } = {};
 
     if (body.slug != null) {
       const slug = String(body.slug).trim().toLowerCase();
@@ -61,6 +63,13 @@ export async function PATCH(request: NextRequest, { params }: Params) {
         body.name === null || body.name === ""
           ? null
           : String(body.name).trim() || null;
+    }
+    if (body.avatarStyle != null) {
+      const s = String(body.avatarStyle).trim();
+      if (!isValidAvatarStyle(s)) {
+        return NextResponse.json({ error: "Invalid avatarStyle" }, { status: 400 });
+      }
+      data.avatarStyle = s;
     }
     if (body.mood != null) {
       const n = Number(body.mood);
@@ -89,6 +98,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
         slug: updated.slug,
         name: updated.name,
         mood: updated.mood,
+        avatarStyle: updated.avatarStyle,
         createdAt: updated.createdAt.toISOString(),
         updatedAt: updated.updatedAt.toISOString(),
       },

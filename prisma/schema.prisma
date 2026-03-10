@@ -21,12 +21,13 @@ model Setting {
 
 // Multiple mood characters, each with its own URL slug and mood
 model Character {
-  id         Int                   @id @default(autoincrement())
-  slug       String                @unique
-  name       String?
-  mood       Int                   @default(0)
-  createdAt  DateTime              @default(now())
-  updatedAt  DateTime              @updatedAt
+  id          Int                   @id @default(autoincrement())
+  slug        String                @unique
+  name        String?
+  mood        Int                   @default(0)
+  avatarStyle String                @default("party-blob") // party-blob | circuit-bot | cosmic-orb
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
   moodHistory CharacterMoodEntry[]
 }
 

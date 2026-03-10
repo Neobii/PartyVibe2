@@ -5,6 +5,7 @@ export type CharacterDto = {
   slug: string;
   name: string | null;
   mood: number;
+  avatarStyle: string;
   createdAt: string;
   updatedAt: string;
 };

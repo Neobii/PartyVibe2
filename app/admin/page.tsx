@@ -1,6 +1,7 @@
 "use client";
 
 import { useCharacters } from "@/hooks/useCharacters";
+import { AVATAR_STYLES } from "@/lib/avatar-styles";
 import {
   useCreateCharacter,
   useUpdateCharacter,
@@ -33,16 +34,25 @@ export default function AdminPage() {
   const [newSlug, setNewSlug] = useState("");
   const [newName, setNewName] = useState("");
   const [newMood, setNewMood] = useState("0");
+  const [newAvatarStyle, setNewAvatarStyle] = useState("party-blob");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editSlug, setEditSlug] = useState("");
   const [editName, setEditName] = useState("");
   const [editMood, setEditMood] = useState("");
+  const [editAvatarStyle, setEditAvatarStyle] = useState("party-blob");
 
-  const startEdit = (c: { id: number; slug: string; name: string | null; mood: number }) => {
+  const startEdit = (c: {
+    id: number;
+    slug: string;
+    name: string | null;
+    mood: number;
+    avatarStyle?: string;
+  }) => {
     setEditingId(c.id);
     setEditSlug(c.slug);
     setEditName(c.name ?? "");
     setEditMood(String(c.mood));
+    setEditAvatarStyle(c.avatarStyle ?? "party-blob");
   };
 
   const cancelEdit = () => {
@@ -50,6 +60,7 @@ export default function AdminPage() {
     setEditSlug("");
     setEditName("");
     setEditMood("");
+    setEditAvatarStyle("party-blob");
   };
 
   return (
@@ -125,12 +136,14 @@ export default function AdminPage() {
                 slug: newSlug.trim().toLowerCase(),
                 name: newName.trim() || undefined,
                 mood: Number.isInteger(mood) ? mood : 0,
+                avatarStyle: newAvatarStyle,
               },
               {
                 onSuccess: () => {
                   setNewSlug("");
                   setNewName("");
                   setNewMood("0");
+                  setNewAvatarStyle("party-blob");
                 },
               }
             );
@@ -176,6 +189,21 @@ export default function AdminPage() {
             onChange={(e) => setNewMood(e.target.value)}
             aria-label="Set mood from negative 100 to 100"
           />
+          <label style={{ gridColumn: "1 / -1", color: "#9ca3af", fontSize: "0.75rem" }}>
+            Character look (avatar)
+          </label>
+          <select
+            style={{ ...inputStyle, gridColumn: "1 / -1" }}
+            value={newAvatarStyle}
+            onChange={(e) => setNewAvatarStyle(e.target.value)}
+            aria-label="Avatar style"
+          >
+            {AVATAR_STYLES.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.label}
+              </option>
+            ))}
+          </select>
           <p style={{ gridColumn: "1 / -1", color: "#6b7280", fontSize: "0.7rem", margin: 0 }}>
             This number is the character’s mood; the face on their page reflects it. You can change it
             anytime with Edit or with thumbs on their page.
@@ -232,6 +260,7 @@ export default function AdminPage() {
                           slug: editSlug.trim().toLowerCase(),
                           name: editName.trim() || null,
                           mood: Number.isInteger(mood) ? mood : c.mood,
+                          avatarStyle: editAvatarStyle,
                         },
                         { onSuccess: () => cancelEdit() }
                       );
@@ -256,6 +285,19 @@ export default function AdminPage() {
                       onChange={(e) => setEditName(e.target.value)}
                       aria-label="Name optional"
                     />
+                    <label style={{ color: "#9ca3af", fontSize: "0.75rem" }}>Character look</label>
+                    <select
+                      style={inputStyle}
+                      value={editAvatarStyle}
+                      onChange={(e) => setEditAvatarStyle(e.target.value)}
+                      aria-label="Avatar style"
+                    >
+                      {AVATAR_STYLES.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </select>
                     <label style={{ color: "#9ca3af", fontSize: "0.75rem" }}>
                       Mood to set (–100…100) — updates face on page
                     </label>
@@ -315,6 +357,11 @@ export default function AdminPage() {
                           {c.name}
                         </span>
                       )}
+                      <div style={{ color: "#9ca3af", fontSize: "0.75rem", marginTop: "0.15rem" }}>
+                        Look:{" "}
+                        {AVATAR_STYLES.find((s) => s.id === (c.avatarStyle ?? "party-blob"))?.label ??
+                          c.avatarStyle}
+                      </div>
                       <div style={{ color: "#e5e7eb", marginTop: "0.25rem" }}>
                         Mood set to: <strong>{c.mood}</strong>
                         <span style={{ color: "#6b7280", fontSize: "0.75rem", marginLeft: "0.35rem" }}>

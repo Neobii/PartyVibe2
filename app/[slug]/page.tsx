@@ -35,6 +35,7 @@ export default async function SlugPage({ params }: Props) {
     <CharacterPage
       characterSlug={character.slug}
       characterName={character.name ?? character.slug}
+      avatarStyle={character.avatarStyle}
     />
   );
 }

@@ -31,9 +31,11 @@ type Props = {
   characterSlug: string;
   /** Shown in the page title; falls back to slug if name is empty */
   characterName: string;
+  /** Which avatar design to render */
+  avatarStyle?: string | null;
 };
 
-export default function CharacterPage({ characterSlug, characterName }: Props) {
+export default function CharacterPage({ characterSlug, characterName, avatarStyle }: Props) {
   const { data, isLoading } = useMood(characterSlug);
   const { mutate: updateMood, isPending: isUpdating } = useUpdateMood(characterSlug);
   const mood = data?.mood;
@@ -123,6 +125,7 @@ export default function CharacterPage({ characterSlug, characterName }: Props) {
             mood={isLoading ? undefined : mood}
             isLoading={isLoading}
             accentColor={color}
+            avatarStyle={avatarStyle}
           />
         </div>
         <p style={{ color: "#e5e7eb", fontSize: "1rem" }}>
