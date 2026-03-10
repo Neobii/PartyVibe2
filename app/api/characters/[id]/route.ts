@@ -73,6 +73,11 @@ export async function PATCH(request: NextRequest, { params }: Params) {
       where: { id },
       data,
     });
+    if (data.mood !== undefined) {
+      await prisma.characterMoodEntry.create({
+        data: { characterId: id, mood: updated.mood },
+      });
+    }
     return NextResponse.json({
       character: {
         id: updated.id,

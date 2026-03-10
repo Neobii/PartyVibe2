@@ -29,6 +29,11 @@ export function useUpdateMood(characterSlug?: string | null) {
     onSuccess: (data) => {
       queryClient.setQueryData(["mood", characterSlug ?? "global"], data);
       queryClient.invalidateQueries({ queryKey: ["mood", "history"] });
+      if (characterSlug) {
+        queryClient.invalidateQueries({
+          queryKey: ["mood", "history", "character", characterSlug],
+        });
+      }
     },
   });
 }

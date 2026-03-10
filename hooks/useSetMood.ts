@@ -38,6 +38,11 @@ export function useSetMood(characterSlug?: string | null) {
           : characterSlug;
       queryClient.setQueryData(["mood", slug ?? "global"], data);
       queryClient.invalidateQueries({ queryKey: ["mood", "history"] });
+      if (slug) {
+        queryClient.invalidateQueries({
+          queryKey: ["mood", "history", "character", slug],
+        });
+      }
       queryClient.invalidateQueries({ queryKey: ["characters"] });
     },
   });

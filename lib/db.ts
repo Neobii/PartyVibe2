@@ -6,13 +6,18 @@ function createPrisma() {
   return new PrismaClient();
 }
 
-// After `prisma generate`, an old cached client may lack new models (e.g. Character).
+// After `prisma generate`, an old cached client may lack new models.
 // Replace stale singleton so API routes get a client with current schema.
+function hasDelegate(client: PrismaClient, name: string): boolean {
+  return typeof (client as unknown as Record<string, unknown>)[name] !== "undefined";
+}
+
 function getPrisma(): PrismaClient {
   const cached = globalForPrisma.prisma;
   if (
     cached &&
-    typeof (cached as unknown as { character?: unknown }).character !== "undefined"
+    hasDelegate(cached, "character") &&
+    hasDelegate(cached, "characterMoodEntry")
   ) {
     return cached;
   }

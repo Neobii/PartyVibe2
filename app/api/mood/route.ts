@@ -7,20 +7,46 @@ async function getCharacterBySlug(slug: string) {
   });
 }
 
+async function appendCharacterMoodHistory(characterId: number, mood: number) {
+  await prisma.characterMoodEntry.create({
+    data: { characterId, mood },
+  });
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const characterSlug = searchParams.get("characterSlug");
+    const history = searchParams.get("history") === "true";
 
     if (characterSlug) {
       const c = await getCharacterBySlug(characterSlug);
       if (!c) {
         return NextResponse.json({ error: "Character not found" }, { status: 404 });
       }
+      if (history) {
+        const entries = await prisma.characterMoodEntry.findMany({
+          where: { characterId: c.id },
+          orderBy: { createdAt: "asc" },
+        });
+        if (entries.length === 0) {
+          // One point so chart has something until first change
+          return NextResponse.json({
+            history: [
+              { mood: c.mood, createdAt: c.updatedAt.toISOString() },
+            ],
+          });
+        }
+        return NextResponse.json({
+          history: entries.map((e) => ({
+            mood: e.mood,
+            createdAt: e.createdAt.toISOString(),
+          })),
+        });
+      }
       return NextResponse.json({ mood: c.mood });
     }
 
-    const history = searchParams.get("history") === "true";
     if (history) {
       const entries = await prisma.moodEntry.findMany({
         orderBy: { createdAt: "asc" },
@@ -71,6 +97,7 @@ export async function POST(request: NextRequest) {
         where: { id: c.id },
         data: { mood: newMood },
       });
+      await appendCharacterMoodHistory(c.id, updated.mood);
       return NextResponse.json({ mood: updated.mood });
     }
 
@@ -124,6 +151,7 @@ export async function PATCH(request: NextRequest) {
         where: { id: c.id },
         data: { mood },
       });
+      await appendCharacterMoodHistory(c.id, updated.mood);
       return NextResponse.json({ mood: updated.mood });
     }
 

@@ -91,12 +91,18 @@ export default function CharacterPage({ characterSlug, characterName }: Props) {
         padding: "1rem",
       }}
     >
-      <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+      <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
         <Link
           href="/"
           style={{ color: "#a78bfa", textDecoration: "none", fontSize: "0.875rem" }}
         >
           ← Home
+        </Link>
+        <Link
+          href={`/${characterSlug}/chart`}
+          style={{ color: "#a78bfa", textDecoration: "none", fontSize: "0.875rem" }}
+        >
+          Mood chart
         </Link>
         <h1 style={{ fontSize: "1.5rem", fontWeight: 600 }}>{characterName}</h1>
       </div>

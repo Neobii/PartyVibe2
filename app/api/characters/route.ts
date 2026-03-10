@@ -54,6 +54,9 @@ export async function POST(request: NextRequest) {
     const created = await prisma.character.create({
       data: { slug, name, mood },
     });
+    await prisma.characterMoodEntry.create({
+      data: { characterId: created.id, mood: created.mood },
+    });
     return NextResponse.json({
       character: {
         id: created.id,

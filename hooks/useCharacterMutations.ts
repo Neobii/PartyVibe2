@@ -43,9 +43,12 @@ export function useUpdateCharacter() {
       }
       return res.json() as Promise<{ character: CharacterDto }>;
     },
-    onSuccess: () => {
+    onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["characters"] });
       qc.invalidateQueries({ queryKey: ["mood"] });
+      qc.invalidateQueries({
+        queryKey: ["mood", "history", "character", res.character.slug],
+      });
     },
   });
 }
