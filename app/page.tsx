@@ -106,6 +106,27 @@ export default function HomePage() {
           </ul>
         )}
       </section>
+
+      <footer
+        style={{
+          marginTop: "auto",
+          paddingTop: "2rem",
+          paddingBottom: "1rem",
+        }}
+      >
+        <a
+          href="https://github.com/Neobii/PartyVibe2"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            color: "#6b7280",
+            fontSize: "0.875rem",
+            textDecoration: "none",
+          }}
+        >
+          GitHub — Neobii/PartyVibe2
+        </a>
+      </footer>
     </main>
   );
 }
