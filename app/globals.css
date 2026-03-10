@@ -29,3 +29,8 @@ body {
 .mood-character-float {
   animation: mood-character-float 3s ease-in-out infinite;
 }
+
+/* Still previews in admin avatar picker */
+.avatar-picker-preview .mood-character-float {
+  animation: none;
+}

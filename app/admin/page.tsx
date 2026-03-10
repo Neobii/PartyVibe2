@@ -2,6 +2,7 @@
 
 import { useCharacters } from "@/hooks/useCharacters";
 import { AVATAR_STYLES } from "@/lib/avatar-styles";
+import AvatarStylePicker from "@/components/AvatarStylePicker";
 import {
   useCreateCharacter,
   useUpdateCharacter,
@@ -190,20 +191,13 @@ export default function AdminPage() {
             aria-label="Set mood from negative 100 to 100"
           />
           <label style={{ gridColumn: "1 / -1", color: "#9ca3af", fontSize: "0.75rem" }}>
-            Character look (avatar)
+            Character look — neutral preview (click to select)
           </label>
-          <select
-            style={{ ...inputStyle, gridColumn: "1 / -1" }}
+          <AvatarStylePicker
+            name="avatar-style-create"
             value={newAvatarStyle}
-            onChange={(e) => setNewAvatarStyle(e.target.value)}
-            aria-label="Avatar style"
-          >
-            {AVATAR_STYLES.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+            onChange={setNewAvatarStyle}
+          />
           <p style={{ gridColumn: "1 / -1", color: "#6b7280", fontSize: "0.7rem", margin: 0 }}>
             This number is the character’s mood; the face on their page reflects it. You can change it
             anytime with Edit or with thumbs on their page.
@@ -285,19 +279,14 @@ export default function AdminPage() {
                       onChange={(e) => setEditName(e.target.value)}
                       aria-label="Name optional"
                     />
-                    <label style={{ color: "#9ca3af", fontSize: "0.75rem" }}>Character look</label>
-                    <select
-                      style={inputStyle}
+                    <label style={{ color: "#9ca3af", fontSize: "0.75rem" }}>
+                      Character look — neutral preview
+                    </label>
+                    <AvatarStylePicker
+                      name={`avatar-style-edit-${c.id}`}
                       value={editAvatarStyle}
-                      onChange={(e) => setEditAvatarStyle(e.target.value)}
-                      aria-label="Avatar style"
-                    >
-                      {AVATAR_STYLES.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={setEditAvatarStyle}
+                    />
                     <label style={{ color: "#9ca3af", fontSize: "0.75rem" }}>
                       Mood to set (–100…100) — updates face on page
                     </label>
