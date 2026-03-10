@@ -12,3 +12,9 @@ model MoodEntry {
   mood      Int
   createdAt DateTime @default(now())
 }
+
+// Key-value settings (e.g. character_slug → URL segment for mood character page)
+model Setting {
+  key   String @id
+  value String
+}

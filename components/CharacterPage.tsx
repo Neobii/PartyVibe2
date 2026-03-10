@@ -22,7 +22,6 @@ function getCharacter(mood: number | undefined) {
     return { face: "😢", label: "sad", color: "#60a5fa" };
   }
 
-  // Outside the specified ranges, exaggerate mood
   if (mood > 40) {
     return { face: "🤩", label: "very happy", color: "#a855f7" };
   }
@@ -187,4 +186,3 @@ export default function CharacterPage() {
     </main>
   );
 }
-
