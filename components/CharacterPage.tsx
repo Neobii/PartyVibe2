@@ -2,31 +2,27 @@
 
 import { useMood } from "@/hooks/useMood";
 import { useUpdateMood } from "@/hooks/useUpdateMood";
+import MoodCharacter from "@/components/MoodCharacter";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 function getCharacter(mood: number | undefined) {
   if (mood === undefined) {
-    return { face: "🤔", label: "thinking", color: "#9ca3af" };
+    return { label: "thinking", color: "#9ca3af" };
   }
-
   if (mood >= 20 && mood <= 40) {
-    return { face: "😄", label: "happy", color: "#22c55e" };
+    return { label: "happy", color: "#22c55e" };
   }
-
   if (mood >= 0 && mood < 20) {
-    return { face: "😐", label: "neutral", color: "#e5e7eb" };
+    return { label: "neutral", color: "#e5e7eb" };
   }
-
   if (mood <= -1 && mood >= -20) {
-    return { face: "😢", label: "sad", color: "#60a5fa" };
+    return { label: "sad", color: "#60a5fa" };
   }
-
   if (mood > 40) {
-    return { face: "🤩", label: "very happy", color: "#a855f7" };
+    return { label: "very happy", color: "#a855f7" };
   }
-
-  return { face: "😭", label: "very sad", color: "#2563eb" };
+  return { label: "very sad", color: "#2563eb" };
 }
 
 const FEEDBACK_DURATION_MS = 5000;
@@ -41,7 +37,7 @@ export default function CharacterPage({ characterSlug, characterName }: Props) {
   const { data, isLoading } = useMood(characterSlug);
   const { mutate: updateMood, isPending: isUpdating } = useUpdateMood(characterSlug);
   const mood = data?.mood;
-  const { face, label, color } = getCharacter(isLoading ? undefined : mood);
+  const { label, color } = getCharacter(isLoading ? undefined : mood);
 
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
   const [feedbackAt, setFeedbackAt] = useState<Date | null>(null);
@@ -117,18 +113,17 @@ export default function CharacterPage({ characterSlug, characterName }: Props) {
       >
         <div
           style={{
-            width: "180px",
-            height: "180px",
-            borderRadius: "999px",
-            background: color,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
-            border: "4px solid rgba(0,0,0,0.3)",
+            padding: "0.5rem",
           }}
         >
-          <span style={{ fontSize: "96px" }}>{face}</span>
+          <MoodCharacter
+            mood={isLoading ? undefined : mood}
+            isLoading={isLoading}
+            accentColor={color}
+          />
         </div>
         <p style={{ color: "#e5e7eb", fontSize: "1rem" }}>
           Mood: {isLoading ? "…" : mood ?? 0} ({label})
