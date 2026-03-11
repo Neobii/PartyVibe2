@@ -58,6 +58,14 @@ vercel
 2. New OAuth App: set **Homepage URL** and **Authorization callback URL** (e.g. `http://localhost:3000/api/auth/callback/github` for local)
 3. Add to `.env`: `GITHUB_ID`, `GITHUB_SECRET`, `AUTH_SECRET` (run `openssl rand -base64 32`)
 
+## Tests
+
+```bash
+npm run test          # run once
+npm run test:watch    # watch mode
+npm run test:coverage # coverage (100% on lib + mood-expression; see vitest.config.ts)
+```
+
 ## API
 
 - **GET /api/mood** — Returns `{ "mood": number }`
